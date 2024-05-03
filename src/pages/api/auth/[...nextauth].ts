@@ -1,8 +1,11 @@
-// pages/api/auth/[...nextauth].ts
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import type { JWT } from "next-auth/jwt";
 import type { Session } from "next-auth";
+import bcrypt from "bcrypt";
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 export default NextAuth({
     providers: [
@@ -13,9 +16,17 @@ export default NextAuth({
                 password: { label: "Password", type: "password" }
             },
             async authorize(credentials, req) {
-                console.log("authorize", credentials);
-                if (credentials && credentials.email === "jsmith@example.com" && credentials.password === "secret") {
-                    return { id: "1", name: "John Smith", email: "jsmith@example.com" };
+                if (credentials === undefined) {
+                    return null;
+                }
+                
+                const user = await prisma.user.findFirst({
+                    where: {
+                        email: credentials.email
+                    }
+                });
+                if (user && await bcrypt.compare(credentials.password, user.password)) {
+                    return { id: user.id, email: user.email };
                 }
                 return null;
             }

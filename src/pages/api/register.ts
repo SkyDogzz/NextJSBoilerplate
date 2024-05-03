@@ -1,0 +1,52 @@
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcrypt';
+import z, { ZodError } from 'zod';
+
+const prisma = new PrismaClient();
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+    if (req.method === 'POST') {
+        const { email, password, name } = req.body;
+        const schema = z.object({
+            email: z.string().email(),
+            password: z.string().min(6),
+            name: z.string().min(3),
+        });
+        
+        try {
+            schema.parse({ email, password, name });
+        } catch (error) {
+            console.error("Validation failed", error);
+            if (error instanceof ZodError) {
+                res.status(400).json({ error: error.errors });
+                return;
+            } else {
+                res.status(500).json({ error: 'Internal Server Error' });
+                return;
+            }
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        try {
+            const newUser = await prisma.user.create({
+                data: {
+                    email,
+                    name,
+                    password: hashedPassword,
+                }
+            });
+
+            res.status(201).json({ user: newUser });
+            return;
+        } catch (error) {
+            res.status(500).json({ error: "Failed to create user" });
+            return;
+        }
+    } else {
+        res.setHeader('Allow', ['POST']);
+        res.status(405).end(`Method ${req.method} Not Allowed`);
+        return;
+    }
+}
