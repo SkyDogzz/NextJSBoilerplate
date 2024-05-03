@@ -29,7 +29,7 @@ You can use the following Docker commands within the project directory:
 To start the development server using Docker Compose:
 
 ``` bash
-npm run docker-dev
+npm run docker:dev
 ```
 This will start the development environment. Open http://localhost:3000 to view your application in action.
 
@@ -37,13 +37,13 @@ This will start the development environment. Open http://localhost:3000 to view 
 To build the Docker image for production using the specific Docker Compose file:
 
 ```bash
-npm run docker-build
+npm run docker:build
 ```
 
 ### Starting Production
 To run the Docker image in detached mode for production:
 
 ```bash
-npm run docker-start
+npm run docker:start
 ```
 This launches the application in production mode, ensuring that it is running in an optimized configuration.
