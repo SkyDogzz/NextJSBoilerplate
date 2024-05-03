@@ -1,13 +1,17 @@
 "use client"
-import React from "react";
-import { useSession } from "next-auth/react";
+import { useSession } from "next-auth/react"
 
 export default function HomePage() {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession()
 
-  if (status === "authenticated") {
-    console.log("User is logged in", session);
-  }
-
-  return <div>{status === "authenticated" ? "Logged in" : "Not logged in"}</div>;
+  return (
+    <div>
+      <h1>Home Page</h1>
+      {session ? (
+        <p>Signed in as {session.user.email}</p>
+      ) : (
+        <p>Not signed in</p>
+      )}
+    </div>
+  )
 };
