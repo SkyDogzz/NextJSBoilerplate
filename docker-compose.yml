@@ -14,9 +14,9 @@ services:
   db:
     image: postgres
     environment:
-      POSTGRES_DB: dev_db
-      POSTGRES_USER: dev_user
-      POSTGRES_PASSWORD: dev_password
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - postgres_data_dev:/var/lib/postgresql/data
 volumes:  
