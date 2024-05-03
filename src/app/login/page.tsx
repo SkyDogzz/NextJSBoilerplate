@@ -32,7 +32,7 @@ export default function LoginPage() {
 
     return (
         <div className='flex justify-center items-center h-screen'>
-            <form onSubmit={handleLogin} className='flex flex-col gap-4 bg-gray-200 p-4 rounded-md'>
+            <form onSubmit={handleLogin} className='flex flex-col gap-4 bg-gray-200 dark:bg-gray-800 p-4 rounded-md dark:text-white'>
                 <div className='flex flex-col gap-2'>
                     <label htmlFor="email">Email</label>
                     <input
@@ -41,7 +41,7 @@ export default function LoginPage() {
                         placeholder="Email"
                         value={email}
                         onChange={e => setEmail(e.target.value)}
-                        className='p-2 border border-gray-300 rounded-md'
+                        className='p-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-700'
                     />
                 </div>
                 <div className='flex flex-col gap-2'>
@@ -52,10 +52,10 @@ export default function LoginPage() {
                         placeholder="Password"
                         value={password}
                         onChange={e => setPassword(e.target.value)}
-                        className='p-2 border border-gray-300 rounded-md'
+                        className='p-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-700'
                     />
                 </div>
-                <button type="submit" className='p-2 bg-blue-500 text-white rounded-md'>Login</button>
+                <button type="submit" className='p-2 bg-blue-500 text-white rounded-md dark:bg-blue-900'>Register</button>
             </form>
         </div>
     )

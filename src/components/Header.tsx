@@ -7,7 +7,7 @@ export default function Header() {
     const { data: session, status } = useSession();
 
     return (
-        <header className="bg-gray-800 flex justify-around text-gray-300">
+        <header className="flex justify-around text-black dark:text-white">
             <Link href="/">
                 <h1 className="text-2xl p-4 font-bold">NextJS Boilerplate</h1>
             </Link>
