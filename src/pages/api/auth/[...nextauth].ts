@@ -9,11 +9,12 @@ export default NextAuth({
         CredentialsProvider({
             name: 'Credentials',
             credentials: {
-                username: { label: "Username", type: "text", placeholder: "jsmith" },
+                email: { label: "Email", type: "email" },
                 password: { label: "Password", type: "password" }
             },
             async authorize(credentials, req) {
-                if (credentials && credentials.username === "jsmith" && credentials.password === "secret") {
+                console.log("authorize", credentials);
+                if (credentials && credentials.email === "jsmith@example.com" && credentials.password === "secret") {
                     return { id: "1", name: "John Smith", email: "jsmith@example.com" };
                 }
                 return null;
@@ -22,6 +23,7 @@ export default NextAuth({
     ],
     session: {
         strategy: "jwt",
+        maxAge: 60 * 60
     },
     callbacks: {
         async jwt({ token, user }) {
@@ -38,6 +40,6 @@ export default NextAuth({
         }
     },
     pages: {
-        // signIn: "/auth/signin",
+        signIn: "/auth/signin",
     },
 });
