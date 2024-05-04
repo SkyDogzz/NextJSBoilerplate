@@ -2,16 +2,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-interface Error {
-    error: {
-        response: {
-            data: {
-                message: string;
-            };
-        };
-    }
-}
-
 export default function RegisterPage() {
     const [email, setEmail] = useState('');
     const [name, setName] = useState('');
@@ -55,7 +45,7 @@ export default function RegisterPage() {
                         <div className='flex flex-col w-full'>
                             <p className="mt-1">Failed to create user:</p>
                             <ul>
-                                {errors.map((error: any, index: number) => (
+                                {errors.map((error: Error, index: number) => (
                                     <li key={index} className="mt-1 list-disc ml-5">{error.message}</li>
                                 ))}
                             </ul>

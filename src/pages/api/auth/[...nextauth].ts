@@ -6,6 +6,11 @@ import bcrypt from "bcrypt";
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
+    
+interface User {
+    id: string;
+    email: string;
+}
 
 export default NextAuth({
     providers: [
@@ -15,18 +20,18 @@ export default NextAuth({
                 email: { label: "Email", type: "email" },
                 password: { label: "Password", type: "password" }
             },
-            async authorize(credentials, req) {
+            async authorize(credentials: Record<"email" | "password", string> | undefined, req: any): Promise<User | null> {
                 if (credentials === undefined) {
                     return null;
                 }
-                
+
                 const user = await prisma.user.findFirst({
                     where: {
                         email: credentials.email
                     }
                 });
                 if (user && await bcrypt.compare(credentials.password, user.password)) {
-                    return { id: user.id, email: user.email };
+                    return { id: user.id.toString(), email: user.email } as User;
                 }
                 return null;
             }
@@ -52,5 +57,6 @@ export default NextAuth({
     },
     pages: {
         signIn: "/login",
-    },
+    },  
+    secret: process.env.NEXTAUTH_SECRET,
 });
