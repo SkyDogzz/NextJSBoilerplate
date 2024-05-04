@@ -1,4 +1,4 @@
-FROM node:18-alpine as base
+FROM node:22.1-alpine as base
 
 WORKDIR /app
 
@@ -24,7 +24,7 @@ RUN npx prisma generate
 
 RUN yarn build
 
-FROM node:18-alpine as production
+FROM node:22.1-alpine as production
 
 WORKDIR /app
 
