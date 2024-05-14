@@ -1,6 +1,7 @@
 "use client"
 import React, { useState, useEffect } from 'react';
 import { signIn, useSession } from 'next-auth/react';
+import { loginSchema } from '@/lib/validationSchemas';
 
 export default function LoginPage() {
     const [email, setEmail] = useState('');
@@ -11,22 +12,39 @@ export default function LoginPage() {
     const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        const result = await signIn('credentials', {
-            redirect: false,
-            email,
-            password
-        });
+        setError('');
 
-        if (result && result.error) {
-            setError(result.error);
+        try {
+            loginSchema.parse({ email, password });
+
+            const result = await signIn('credentials', {
+                redirect: false,
+                email,
+                password
+            });
+
+            if (result && result.error) {
+                setError(result.error);
+                const interval = setInterval(() => {
+                    setError('');
+                    clearInterval(interval);
+                }, 20000);
+                console.error("Failed to sign in!", result.error);
+            } else {
+                console.log("Logged in successfully!");
+                window.location.href = "/";
+            }
+        } catch (error: any) {
+            if (error instanceof Error) {
+                setError(error.message);
+            } else if (error.response && error.response.data) {
+                setError(error.response.data.error);
+            }
             const interval = setInterval(() => {
                 setError('');
                 clearInterval(interval);
             }, 20000);
-            console.error("Failed to sign in!", result.error);
-        } else {
-            console.log("Logged in successfully!");
-            window.location.href = "/";
+            console.error('Error logging in', error);
         }
     };
 

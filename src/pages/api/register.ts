@@ -1,21 +1,17 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
-import z, { ZodError } from 'zod';
+import { ZodError } from 'zod';
+import { registerSchema } from '@/lib/validationSchemas';
 
 const prisma = new PrismaClient();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
         const { email, password, name } = req.body;
-        const schema = z.object({
-            email: z.string().email(),
-            password: z.string().min(6),
-            name: z.string().min(3),
-        });
-        
+
         try {
-            schema.parse({ email, password, name });
+            registerSchema.parse({ email, password, name });
         } catch (error) {
             console.error("Validation failed", error);
             if (error instanceof ZodError) {

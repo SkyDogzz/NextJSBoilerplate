@@ -4,9 +4,11 @@ import type { JWT } from "next-auth/jwt";
 import type { Session } from "next-auth";
 import bcrypt from "bcrypt";
 import { PrismaClient } from '@prisma/client';
+import { loginSchema } from "@/lib/validationSchemas";
+import { ZodError } from "zod";
 
 const prisma = new PrismaClient();
-    
+
 interface User {
     id: string;
     email: string;
@@ -23,6 +25,17 @@ export default NextAuth({
             async authorize(credentials: Record<"email" | "password", string> | undefined, req: any): Promise<User | null> {
                 if (credentials === undefined) {
                     return null;
+                }
+
+                try {
+                    loginSchema.parse(credentials);
+                } catch (error) {
+                    console.error("Validation failed", error);
+                    if (error instanceof ZodError) {
+                        return null;
+                    } else {
+                        return null;
+                    }
                 }
 
                 const user = await prisma.user.findFirst({

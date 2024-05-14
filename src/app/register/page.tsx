@@ -1,18 +1,23 @@
 "use client"
 import React, { useState } from 'react';
 import axios from 'axios';
+import { registerSchema } from '@/lib/validationSchemas';
 
 export default function RegisterPage() {
     const [email, setEmail] = useState('');
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
     const [success, setSuccess] = useState(false);
-    const [errors, setErrors] = useState([]);
+    const [errors, setErrors] = useState<string[]>([]);
 
     const handleRegister = async (event: React.FormEvent) => {
         event.preventDefault();
 
+        setErrors([]);
+
         try {
+            registerSchema.parse({ email, name, password });
+
             const res = await axios.post('/api/register', { email, name, password });
             setSuccess(true);
             const interval = setInterval(() => {
@@ -21,7 +26,11 @@ export default function RegisterPage() {
             }, 2000);
             console.log('User created successfully', res.data);
         } catch (error: any) {
-            setErrors(error.response.data.error)
+            if (error instanceof Error) {
+                setErrors([error.message]);
+            } else if (error.response && error.response.data) {
+                setErrors(error.response.data.error);
+            }
             const interval = setInterval(() => {
                 setErrors([]);
                 clearInterval(interval);
@@ -45,8 +54,8 @@ export default function RegisterPage() {
                         <div className='flex flex-col w-full'>
                             <p className="mt-1">Failed to create user:</p>
                             <ul>
-                                {errors.map((error: Error, index: number) => (
-                                    <li key={index} className="mt-1 list-disc ml-5">{error.message}</li>
+                                {errors.map((error, index) => (
+                                    <li key={index} className="mt-1 list-disc ml-5">{error}</li>
                                 ))}
                             </ul>
                         </div>
